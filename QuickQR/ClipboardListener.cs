@@ -1,6 +1,16 @@
 ﻿
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
 namespace CSClipboardListener
 {
     public class ClipboardEventArgs : EventArgs

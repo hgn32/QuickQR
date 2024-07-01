@@ -1,12 +1,23 @@
 using CSClipboardListener;
 using QRCoder;
-
-namespace WinFormsApp1
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Net.Http;
+using System.Reflection.Metadata;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+namespace QuickQR
 {
     public partial class FormQR : Form
     {
         private readonly ClipboardListener clipListener;
         QRCodeGenerator qrGenerator = new QRCodeGenerator();
+
+        int CountDown = 0;
         public FormQR()
         {
             clipListener = new ClipboardListener(this);
@@ -23,6 +34,7 @@ namespace WinFormsApp1
 
         private void OnClipBoardChanged(object sender, ClipboardEventArgs args)
         {
+            textBoxClipText.Text = args.Text;
             QRCodeData qRCodeData = qrGenerator.CreateQrCode(args.Text, QRCodeGenerator.ECCLevel.Q);
             QRCode qrCode = new QRCode(qRCodeData);
             Bitmap qrCodeImage = qrCode.GetGraphic(20);
@@ -38,7 +50,8 @@ namespace WinFormsApp1
 
             }
             this.Show();
-            timerHide.Interval = 1000 * 5;
+            CountDown = 5;
+            timerHide.Interval = 1000 ;
             timerHide.Start();
         }
         private void FormQR_FormClosing(object sender, FormClosingEventArgs e)
@@ -46,10 +59,30 @@ namespace WinFormsApp1
             clipListener.DestroyHandle();
         }
 
+
+        private void toolStripMenuItemConfig_Click(object sender, EventArgs e) {
+            new FormConfig().ShowDialog();
+        }
+        private void toolStripMenuItemExit_Click(object sender, EventArgs e) {
+            if (MessageBox.Show("èIóπÇµÇƒÇ‡Ç¢Ç¢Ç≈Ç∑Ç©ÅH", "QuickQR", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
+            {
+                this.Close();
+            }
+        }
+
         private void timerHide_Tick(object sender, EventArgs e)
         {
-            this.Hide();
-            timerHide.Stop();
+            if (CountDown <= 0)
+            {
+                textBoxClipText.Text = "";
+                this.Hide();
+                timerHide.Stop();
+            }
+            else
+            {
+                CountDown--;
+                labelCountDown.Text = CountDown.ToString();
+            }
         }
 
     }
